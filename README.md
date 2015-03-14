@@ -1,14 +1,14 @@
-# WorldDomination-1C2015
+# WorldDomination-1C2015 #
 
 ======================================================================
-ANUNCIOS
+## ANUNCIOS ##
 
 * Hubo un problemita con la configuración del proyecto de Eclipse.
   Aparentemente, la configuración no se guarda en el repo. Ahora
   estoy viendo como lo soluciono.
 
 ======================================================================
-IDEAS QUE PARA INCORPORAR LO QUE VAMOS VIENDO AL TP
+## IDEAS QUE PARA INCORPORAR LO QUE VAMOS VIENDO AL TP ##
 
 * En vez de leer los archivos línea por línea, es recomendable 
   cargarlos completos en memoria y operar ahí.
@@ -24,7 +24,7 @@ IDEAS QUE PARA INCORPORAR LO QUE VAMOS VIENDO AL TP
   secundaria.
 
 ======================================================================
-HERRAMIENTAS QUE QUIZÁS SIRVAN
+## HERRAMIENTAS QUE QUIZÁS SIRVAN ##
 
 * Word2Vec: Herramienta de Google, mencionada en Kaggle,
   útil para el análisis de sentimientos en texto.
@@ -38,7 +38,6 @@ HERRAMIENTAS QUE QUIZÁS SIRVAN
 
 
 ======================================================================
-INFO ÚTIL
+## INFO ÚTIL ##
 
 * En Kaggle hay tutoriales y esas cosas. Podrían resultar útiles.
-
