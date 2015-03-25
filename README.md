@@ -3,9 +3,6 @@
 ======================================================================
 ## ANUNCIOS ##
 
-* Hubo un problemita con la configuración del proyecto de Eclipse.
-  Aparentemente, la configuración no se guarda en el repo. Ahora
-  estoy viendo como lo soluciono.
 
 ======================================================================
 ## IDEAS QUE PARA INCORPORAR LO QUE VAMOS VIENDO AL TP ##
