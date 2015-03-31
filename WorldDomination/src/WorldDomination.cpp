@@ -7,14 +7,15 @@
 //============================================================================
 
 
-#include <iostream>
+#include <string>
+
 #include "csvparser.h"
-#include <stdio.h>
+
 using namespace std;
 
 string fileName;
 
 int main() {
 	startParser();
-   return 0;
+	return 0;
 }
