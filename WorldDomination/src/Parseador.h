@@ -23,7 +23,9 @@ public:
 	Parseador(const char* direccionArchivo);
 	virtual ~Parseador();
 	std::vector<review> getReviews(int cantidad);
-
+	std::vector<review> getTestReviews();
+	void printReviews( std::vector<review> &vectorReviews );
+	void escribir_resultados(std::vector<review> &vectorReviews,std::string dirArchivo);
 private:
 	std::fstream archivo;
 };

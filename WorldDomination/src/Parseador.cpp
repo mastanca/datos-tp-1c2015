@@ -6,13 +6,17 @@
  */
 
 #include "Parseador.h"
+
+#include <error.h>
 #include <stdlib.h>
+#include <iostream>
+#include <iterator>
+#include <sstream>
 
 using namespace std;
 
 Parseador::Parseador(const char* direccionArchivo) {
 	archivo.open(direccionArchivo);
-	perror("error");
 }
 
 vector<review> Parseador::getReviews(int cantidad){
@@ -24,7 +28,6 @@ vector<review> Parseador::getReviews(int cantidad){
 	  while (getline(archivo, line) && i < cantidad) {
 	    if (line.empty())
 	      continue;
-
 	    string id = line.substr(0, line.find(delimitador));
 	    line.erase(0, line.find(delimitador) + delimitador.length());
 
@@ -32,7 +35,7 @@ vector<review> Parseador::getReviews(int cantidad){
 	    line.erase(0, line.find(delimitador) + delimitador.length());
 
 	    string texto = line.substr(0, line.find(delimitador));
-	    line.erase(0, line.find(delimitador) + delimitador.length());
+	    //line.erase(0, line.find(delimitador) + delimitador.length());
 
 	    review nuevaReview;
 	    nuevaReview.id = id;
@@ -43,6 +46,49 @@ vector<review> Parseador::getReviews(int cantidad){
 	    i++;
 	  }
 	  return vector;
+}
+
+vector<review> Parseador::getTestReviews(){
+    string line;
+    string delimitador = ",";
+    vector<review> vector;
+    getline(archivo, line); //saco primer linea contiene los titulos nomas
+    int i = 0;
+    while (getline(archivo, line)) {
+      if (line.empty())
+        continue;
+      string id = line.substr(0, line.find(delimitador));
+      line.erase(0, line.find(delimitador) + delimitador.length());
+      string texto = line.substr(0, line.find(delimitador));
+      //line.erase(0, line.find(delimitador) + delimitador.length());
+
+      review nuevaReview;
+      nuevaReview.id = id;
+      nuevaReview.sentimiento = 0;
+      nuevaReview.texto = texto;
+
+      vector.push_back(nuevaReview);
+      i++;
+    }
+    return vector;
+}
+
+void Parseador::escribir_resultados(vector<review> &vectorReviews,
+                                    string dirArchivo) {
+  ofstream fout(dirArchivo.c_str());
+  fout << "id" << ',' << "sentiment" << '\n';
+  std::stringstream buffer;
+  for (std::vector<review>::iterator review = vectorReviews.begin();
+      review != vectorReviews.end(); ++review) {
+    fout << review->id << "," << review->sentimiento << '\n';
+  }
+}
+
+void Parseador::printReviews(vector<review> &vectorReviews) {
+  for (std::vector<review>::iterator review = vectorReviews.begin();
+      review != vectorReviews.end(); ++review)
+    cout << review->id << " " << review->sentimiento << " " << review->texto
+         << endl;
 }
 
 Parseador::~Parseador() {
