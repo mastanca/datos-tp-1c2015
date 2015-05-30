@@ -15,7 +15,7 @@
 #include "../dlib/all/source.cpp"
 using namespace std;
 
-#define CANTIDAD_A_COMPARAR 300
+#define CANTIDAD_A_COMPARAR 1
 
 void AMDL::ejecutar(){
 
@@ -63,7 +63,7 @@ void AMDL::ejecutar(){
     else
       review->sentimiento = 0;
     if ((i%1000) == 0)
-    cout << "Procesados: " << i <<" de 25000" << endl;
+    cout << "Processed " << i <<" of 25000" << endl;
   }
 
   // Calculo la probabilidad de un review de ser positivo o negativo
@@ -82,7 +82,7 @@ void AMDL::ejecutar(){
     }
 
 
-  vector<int> vectorProbabilidades;
+  vector<float> vectorProbabilidades;
   float probabilidad = 0;
   vector<int>::iterator positivoDif = vectorPositivoDif.begin();
   vector<int>::iterator negativoDif = vectorNegativoDif.begin();
