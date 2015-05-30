@@ -10,5 +10,6 @@ using namespace std;
 
 int main() {
   AMDL amdl;
+  cout << "Processing, this may take a while..." << endl;
   amdl.ejecutar();
 }

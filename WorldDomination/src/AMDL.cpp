@@ -15,7 +15,7 @@
 #include "../dlib/all/source.cpp"
 using namespace std;
 
-#define CANTIDAD_A_COMPARAR 5
+#define CANTIDAD_A_COMPARAR 300
 
 void AMDL::ejecutar(){
 
@@ -98,4 +98,6 @@ void AMDL::ejecutar(){
 
 
   parseadorTest.escribir_resultados(vectorTestReviews, "data/resultados.csv");
+
+  cout << "Done!" <<endl;
 }
