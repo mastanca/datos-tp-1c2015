@@ -62,7 +62,8 @@ void AMDL::ejecutar(){
       review->sentimiento = 1;
     else
       review->sentimiento = 0;
-    cout << i << endl;
+    if ((i%1000) == 0)
+    cout << "Procesados: " << i <<" de 25000" << endl;
   }
 
   // Calculo la probabilidad de un review de ser positivo o negativo
@@ -82,13 +83,15 @@ void AMDL::ejecutar(){
 
 
   vector<int> vectorProbabilidades;
-  int probabilidad = 0;
+  float probabilidad = 0;
   vector<int>::iterator positivoDif = vectorPositivoDif.begin();
   vector<int>::iterator negativoDif = vectorNegativoDif.begin();
 
   for (unsigned int j = 0; j < vectorNegativoDif.size(); j++){
-	  probabilidad = (((1-*(positivoDif+j))/maxPositivoDif) + (*(negativoDif+j)/maxNegativoDif))/2;
+	  probabilidad = ((((float)(1-*positivoDif))/(float)maxPositivoDif) + ((float)*negativoDif/(float)maxNegativoDif))/(float)2;
 	  vectorProbabilidades.push_back(probabilidad);
+	  positivoDif++;
+	  negativoDif++;
   }
 
   parseadorTest.escribir_probabilidades(vectorProbabilidades, "data/probabilidades.csv");
