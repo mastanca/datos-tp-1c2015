@@ -15,7 +15,7 @@
 #include "../dlib/all/source.cpp"
 using namespace std;
 
-#define CANTIDAD_A_COMPARAR 15
+#define CANTIDAD_A_COMPARAR 5
 
 void AMDL::ejecutar(){
 
@@ -80,13 +80,14 @@ void AMDL::ejecutar(){
   		  maxNegativoDif = *negativoDif;
     }
 
+
   vector<int> vectorProbabilidades;
-  int probabilidad;
+  int probabilidad = 0;
   vector<int>::iterator positivoDif = vectorPositivoDif.begin();
   vector<int>::iterator negativoDif = vectorNegativoDif.begin();
 
   for (unsigned int j = 0; j < vectorNegativoDif.size(); j++){
-	  probabilidad = (((1-(*positivoDif+j))/maxPositivoDif) + (*negativoDif/maxNegativoDif))/2;
+	  probabilidad = (((1-*(positivoDif+j))/maxPositivoDif) + (*(negativoDif+j)/maxNegativoDif))/2;
 	  vectorProbabilidades.push_back(probabilidad);
   }
 
