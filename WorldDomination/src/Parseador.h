@@ -26,6 +26,7 @@ public:
 	std::vector<review> getTestReviews();
 	void printReviews( std::vector<review> &vectorReviews );
 	void escribir_resultados(std::vector<review> &vectorReviews,std::string dirArchivo);
+	void escribir_probabilidades(std::vector<int> &vectorProbabilidades,std::string dirArchivo);
 private:
 	std::fstream archivo;
 };

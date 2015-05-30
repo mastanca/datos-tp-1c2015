@@ -15,7 +15,7 @@
 #include "../dlib/all/source.cpp"
 using namespace std;
 
-#define CANTIDAD_A_COMPARAR 10
+#define CANTIDAD_A_COMPARAR 15
 
 void AMDL::ejecutar(){
 
@@ -40,6 +40,11 @@ void AMDL::ejecutar(){
   Parseador parseadorTest("data/test_data_limpia.csv");
   vector<review> vectorTestReviews;
 
+  // Armo 2 vectores para ir almacenando las diferencias entre cada review con los positivos y negativos
+  // que vamos a usar para sacar la proba
+  vector<int> vectorPositivoDif;
+  vector<int> vectorNegativoDif;
+
   vectorTestReviews = parseadorTest.getTestReviews();
   int i = 0;
   for (vector<review>::iterator review = vectorTestReviews.begin()+ 0;
@@ -49,18 +54,44 @@ void AMDL::ejecutar(){
     string negativoTest = negativos + review->texto;
     string positivoComprimidoTest = compresor.comprimir(positivoTest);
     string negativoComprimidoTest = compresor.comprimir(negativoTest);
-    int positivoDif = positivoComprimidoTest.size()
-        - positivosComprimidos.size();
-    int negativoDif = negativoComprimidoTest.size()
-        - negativosComprimidos.size();
+    int positivoDif = positivoComprimidoTest.size() - positivosComprimidos.size();
+    vectorPositivoDif.push_back(positivoDif);
+    int negativoDif = negativoComprimidoTest.size() - negativosComprimidos.size();
+    vectorNegativoDif.push_back(negativoDif);
     if (positivoDif < negativoDif)
       review->sentimiento = 1;
     else
       review->sentimiento = 0;
     cout << i << endl;
-    //if (i > 18750)
-    //  break;
   }
+
+  // Calculo la probabilidad de un review de ser positivo o negativo
+  int maxPositivoDif = 0;
+  for (vector<int>::iterator positivoDif = vectorPositivoDif.begin(); positivoDif != vectorPositivoDif.end();
+		  positivoDif++){
+	  if (maxPositivoDif < *positivoDif)
+		  maxPositivoDif = *positivoDif;
+  }
+
+  int maxNegativoDif = 0;
+  for (vector<int>::iterator negativoDif = vectorNegativoDif.begin(); negativoDif != vectorNegativoDif.end();
+   		negativoDif++){
+	  if (maxNegativoDif < *negativoDif)
+  		  maxNegativoDif = *negativoDif;
+    }
+
+  vector<int> vectorProbabilidades;
+  int probabilidad;
+  vector<int>::iterator positivoDif = vectorPositivoDif.begin();
+  vector<int>::iterator negativoDif = vectorNegativoDif.begin();
+
+  for (unsigned int j = 0; j < vectorNegativoDif.size(); j++){
+	  probabilidad = (((1-(*positivoDif+j))/maxPositivoDif) + (*negativoDif/maxNegativoDif))/2;
+	  vectorProbabilidades.push_back(probabilidad);
+  }
+
+  parseadorTest.escribir_probabilidades(vectorProbabilidades, "data/probabilidades.csv");
+
 
   parseadorTest.escribir_resultados(vectorTestReviews, "data/resultados.csv");
 }
