@@ -12,6 +12,7 @@
 #include <iostream>
 #include <iterator>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -35,7 +36,6 @@ vector<review> Parseador::getReviews(int cantidad){
 	    line.erase(0, line.find(delimitador) + delimitador.length());
 
 	    string texto = line.substr(0, line.find(delimitador));
-	    //line.erase(0, line.find(delimitador) + delimitador.length());
 
 	    review nuevaReview;
 	    nuevaReview.id = id;
@@ -60,7 +60,6 @@ vector<review> Parseador::getTestReviews(){
       string id = line.substr(0, line.find(delimitador));
       line.erase(0, line.find(delimitador) + delimitador.length());
       string texto = line.substr(0, line.find(delimitador));
-      //line.erase(0, line.find(delimitador) + delimitador.length());
 
       review nuevaReview;
       nuevaReview.id = id;
@@ -84,12 +83,12 @@ void Parseador::escribir_resultados(vector<review> &vectorReviews,
   }
 }
 
-void Parseador::escribir_probabilidades(vector<double> &vectorProbabilidades,
+void Parseador::escribir_probabilidades(vector<float> &vectorProbabilidades,
                                     string dirArchivo) {
   ofstream fout(dirArchivo.c_str());
-  // fout << "probabilidad" << '\n';
+  fout << "probabilidad" << '\n';
   std::stringstream buffer;
-  for (std::vector<double>::iterator probabilidad = vectorProbabilidades.begin();
+  for (std::vector<float>::iterator probabilidad = vectorProbabilidades.begin();
       probabilidad != vectorProbabilidades.end(); ++probabilidad) {
     fout << *probabilidad << '\n';
   }
@@ -102,7 +101,67 @@ void Parseador::printReviews(vector<review> &vectorReviews) {
          << endl;
 }
 
+
+
 Parseador::~Parseador() {
-	archivo.close();
+  //archivo.close();
+}
+
+void Parseador::sacarPalabrasInusuales(int ocurrenciasMinimas,
+                                       string dirArchivoSalida) {
+
+  vector<review> reviewsEntrenamiento = this->getReviews(25000);
+  vector<int> cantidad;
+  vector<string> palabras;
+  for (int i = 0; i < (int) reviewsEntrenamiento.size(); i++) {
+    vector<string> palabrasReview;
+    this->tokenizar(reviewsEntrenamiento[i].texto, ' ', palabrasReview);
+    for (std::vector<string>::iterator palabraReview = palabrasReview.begin();
+        palabraReview != palabrasReview.end(); ++palabraReview) {
+      vector<string>::iterator it;
+      it = find(palabras.begin(), palabras.end(), *palabraReview);
+      if (it != palabras.end()) {
+        int pos = it - palabras.begin();
+        cantidad[pos]++;
+      } else {
+        palabras.push_back(*palabraReview);
+        cantidad.push_back(1);
+      }
+    }
+    cout << i << endl;
+  }
+
+  for (int i = 0; i < (int) reviewsEntrenamiento.size(); i++) {
+    vector<string> palabrasReview;
+    string nuevoReview;
+    this->tokenizar(reviewsEntrenamiento[i].texto, ' ', palabrasReview);
+    for (std::vector<string>::iterator palabraReview = palabrasReview.begin();
+        palabraReview != palabrasReview.end(); ++palabraReview) {
+      vector<string>::iterator it;
+      it = find(palabras.begin(), palabras.end(), *palabraReview);
+      int pos = it - palabras.begin();
+      if (cantidad[pos] > ocurrenciasMinimas ){
+        nuevoReview += ( (*palabraReview) + ' ');
+      }
+    }
+    reviewsEntrenamiento[i].texto = nuevoReview;
+  }
+
+  ofstream fout(dirArchivoSalida.c_str());
+  fout << "id" << ',' << "sentiment" << ',' << "review" << '\n';
+  std::stringstream buffer;
+  for (std::vector<review>::iterator review = reviewsEntrenamiento.begin();
+      review != reviewsEntrenamiento.end(); ++review) {
+    fout << review->id << "," << review->sentimiento << "," << review->texto << '\n';
+  }
+}
+
+std::vector<std::string> &Parseador::tokenizar(const std::string &s, char delim, std::vector<std::string> &elems){
+  std::stringstream ss(s);
+  std::string item;
+  while (std::getline(ss, item, delim)) {
+      elems.push_back(item);
+  }
+  return elems;
 }
 

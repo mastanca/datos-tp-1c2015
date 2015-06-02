@@ -19,10 +19,3 @@ std::string Compresor::comprimir(string &entrada) {
     salida = textoComprimido.str();
     return salida;
 }
-
-void Compresor::descomprimir(stringstream &entrada, stringstream &salida){
-  // esta funcion no anda, me parece que es porque no funciona con stringstreams
-  // y hay q pasarle como en la otra, igual como no hay que usarla por ahora ni me fijo
-  //compresor.decompress(entrada,salida);
-}
-

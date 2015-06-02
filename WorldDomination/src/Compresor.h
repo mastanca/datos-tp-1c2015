@@ -32,7 +32,6 @@ using namespace std;
 
 class Compresor {
  public:
-  void descomprimir(stringstream &entrada, stringstream &salida);
   std::string comprimir(string &entrada);
  private:
   COMPRESOR_A_USAR compresor;
