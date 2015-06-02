@@ -84,12 +84,12 @@ void Parseador::escribir_resultados(vector<review> &vectorReviews,
   }
 }
 
-void Parseador::escribir_probabilidades(vector<float> &vectorProbabilidades,
+void Parseador::escribir_probabilidades(vector<double> &vectorProbabilidades,
                                     string dirArchivo) {
   ofstream fout(dirArchivo.c_str());
-  fout << "probabilidad" << '\n';
+  // fout << "probabilidad" << '\n';
   std::stringstream buffer;
-  for (std::vector<float>::iterator probabilidad = vectorProbabilidades.begin();
+  for (std::vector<double>::iterator probabilidad = vectorProbabilidades.begin();
       probabilidad != vectorProbabilidades.end(); ++probabilidad) {
     fout << *probabilidad << '\n';
   }

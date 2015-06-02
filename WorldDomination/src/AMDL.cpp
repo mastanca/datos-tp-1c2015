@@ -12,10 +12,11 @@
 #include <string>
 #include "Compresor.h"
 #include "Parseador.h"
+#include "math.h"
 #include "../dlib/all/source.cpp"
 using namespace std;
 
-#define CANTIDAD_A_COMPARAR 1
+#define CANTIDAD_A_COMPARAR 5
 
 void AMDL::ejecutar(){
 
@@ -82,13 +83,15 @@ void AMDL::ejecutar(){
     }
 
 
-  vector<float> vectorProbabilidades;
-  float probabilidad = 0;
+  vector<double> vectorProbabilidades;
+  double probabilidad = 0;
   vector<int>::iterator positivoDif = vectorPositivoDif.begin();
   vector<int>::iterator negativoDif = vectorNegativoDif.begin();
 
   for (unsigned int j = 0; j < vectorNegativoDif.size(); j++){
-	  probabilidad = ((((float)(1-*positivoDif))/(float)maxPositivoDif) + ((float)*negativoDif/(float)maxNegativoDif))/(float)2;
+	  //probabilidad = ((((float)(1-*positivoDif))/(float)maxPositivoDif) + ((float)*negativoDif/(float)maxNegativoDif))/(float)2;
+	  double x = -1*(negativoDif -positivoDif);
+	  probabilidad = 1/(1+exp(x));
 	  vectorProbabilidades.push_back(probabilidad);
 	  positivoDif++;
 	  negativoDif++;
