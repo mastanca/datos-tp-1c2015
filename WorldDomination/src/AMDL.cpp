@@ -15,7 +15,7 @@
 #include "math.h"
 using namespace std;
 
-#define CANTIDAD_A_COMPARAR 25000
+#define CANTIDAD_A_COMPARAR 1
 
 AMDL::AMDL(int pos_inicial, int pos_final, std::string dirArchivo){
   this->pos_inicial = pos_inicial;
@@ -101,8 +101,9 @@ void AMDL::ejecutar() {
 
   for (unsigned int j = 0; j < vectorNegativoDif.size(); j++){
 	  //probabilidad = ((((float)(1-*positivoDif))/(float)maxPositivoDif) + ((float)*negativoDif/(float)maxNegativoDif))/(float)2;
-	  double x = -1*(negativoDif -positivoDif);
-	  probabilidad = (double)1/(double)(1+exp(x));
+	  double x = (-1)*(*negativoDif - *positivoDif);
+	  double factorDeEscala = (double)(2*log((1/0.999)-1))/(double)(maxPositivoDif+maxNegativoDif);
+	  probabilidad = (double)1/(double)(1+exp(x*factorDeEscala));
 	  vectorProbabilidades.push_back(probabilidad);
 	  positivoDif++;
 	  negativoDif++;

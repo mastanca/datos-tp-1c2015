@@ -26,4 +26,5 @@ int main() {
   thread2.join();
   thread3.join();
   thread4.join();
+  cout << "Done!" << endl;
 }
