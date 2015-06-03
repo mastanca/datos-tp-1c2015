@@ -12,9 +12,10 @@
 #include <string>
 #include "Compresor.h"
 #include "Parseador.h"
+#include "math.h"
 using namespace std;
 
-#define CANTIDAD_A_COMPARAR 300
+#define CANTIDAD_A_COMPARAR 25000
 
 AMDL::AMDL(int pos_inicial, int pos_final, std::string dirArchivo){
   this->pos_inicial = pos_inicial;
@@ -69,7 +70,8 @@ void AMDL::ejecutar() {
       review->sentimiento = 0;
 //    if ((i%1000) == 0)
 //    cout << "Procesados: " << i <<" de 25000" << endl;
-    cout << i << " (tiene que llegar hasta 6250 nomas ahora)" << endl;
+    if ((i%100)==0)
+    	cout <<"Procesados: " << i << endl;
     if ( i > (pos_final - pos_inicial))
       break;
   }
@@ -77,35 +79,36 @@ void AMDL::ejecutar() {
 
 
   // Calculo la probabilidad de un review de ser positivo o negativo
-  /*
   int maxPositivoDif = 0;
   for (vector<int>::iterator positivoDif = vectorPositivoDif.begin(); positivoDif != vectorPositivoDif.end();
-      positivoDif++){
-    if (maxPositivoDif < *positivoDif)
-      maxPositivoDif = *positivoDif;
+		  positivoDif++){
+	  if (maxPositivoDif < *positivoDif)
+		  maxPositivoDif = *positivoDif;
   }
 
   int maxNegativoDif = 0;
   for (vector<int>::iterator negativoDif = vectorNegativoDif.begin(); negativoDif != vectorNegativoDif.end();
-      negativoDif++){
-    if (maxNegativoDif < *negativoDif)
-        maxNegativoDif = *negativoDif;
+   		negativoDif++){
+	  if (maxNegativoDif < *negativoDif)
+  		  maxNegativoDif = *negativoDif;
     }
 
 
-  vector<int> vectorProbabilidades;
-  float probabilidad = 0;
+  vector<double> vectorProbabilidades;
+  double probabilidad = 0;
   vector<int>::iterator positivoDif = vectorPositivoDif.begin();
   vector<int>::iterator negativoDif = vectorNegativoDif.begin();
 
   for (unsigned int j = 0; j < vectorNegativoDif.size(); j++){
-    probabilidad = ((((float)(1-*positivoDif))/(float)maxPositivoDif) + ((float)*negativoDif/(float)maxNegativoDif))/(float)2;
-    vectorProbabilidades.push_back(probabilidad);
-    positivoDif++;
-    negativoDif++;
+	  //probabilidad = ((((float)(1-*positivoDif))/(float)maxPositivoDif) + ((float)*negativoDif/(float)maxNegativoDif))/(float)2;
+	  double x = -1*(negativoDif -positivoDif);
+	  probabilidad = (double)1/(double)(1+exp(x));
+	  vectorProbabilidades.push_back(probabilidad);
+	  positivoDif++;
+	  negativoDif++;
   }
 
-  parseadorTest.escribir_probabilidades(vectorProbabilidades, "data/probabilidades.csv");*/
+  parseadorTest.escribir_probabilidades(vectorProbabilidades, "data/probabilidades.csv");
 
   parseadorTest.escribir_resultados(vectorTestReviews, dirArchivo);
 }

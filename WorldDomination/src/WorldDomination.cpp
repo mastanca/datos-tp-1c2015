@@ -10,6 +10,7 @@
 using namespace std;
 
 int main() {
+	cout << "Cada thread va a procesar 6250 reviews" << endl;
   AMDL thread1(0,6250,"data/0a6250.csv");
   AMDL thread2(6250,12500,"data/6250a12500.csv");
   AMDL thread3(12500,18750,"data/12500a18750.csv");

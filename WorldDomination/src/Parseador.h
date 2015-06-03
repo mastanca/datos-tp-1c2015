@@ -28,7 +28,7 @@ public:
 	void escribir_resultados(std::vector<review> &vectorReviews,std::string dirArchivo);
 	void sacarPalabrasInusuales(int ocurrenciasMinimas, std::string dirArchivoSalida);
 	std::vector<std::string> &tokenizar(const std::string &s, char delim, std::vector<std::string> &elems);
-	void escribir_probabilidades(std::vector<float> &vectorProbabilidades,std::string dirArchivo);
+	void escribir_probabilidades(std::vector<double> &vectorProbabilidades,std::string dirArchivo);
 private:
 	std::fstream archivo;
 };
