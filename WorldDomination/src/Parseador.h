@@ -18,6 +18,11 @@ struct review {
     std::string texto;
   };
 
+struct label {
+	std::string id;
+	int sentimiento;
+};
+
 class Parseador {
 public:
 	Parseador(const char* direccionArchivo);
@@ -29,6 +34,7 @@ public:
 	void sacarPalabrasInusuales(int ocurrenciasMinimas, std::string dirArchivoSalida);
 	std::vector<std::string> &tokenizar(const std::string &s, char delim, std::vector<std::string> &elems);
 	void escribir_probabilidades(std::vector<double> &vectorProbabilidades,std::string dirArchivo);
+	std::vector<label> getLabels(int cantidad);
 private:
 	std::fstream archivo;
 };

@@ -165,3 +165,32 @@ std::vector<std::string> &Parseador::tokenizar(const std::string &s, char delim,
   return elems;
 }
 
+vector<label> Parseador::getLabels(int cantidad){
+	  string line;
+	  string delimitador = ",";
+	  vector<label> vector;
+	  getline(archivo, line); //saco primer linea contiene los titulos nomas
+	  int i = 0;
+	  while (getline(archivo, line) && i < cantidad) {
+	    if (line.empty())
+	      continue;
+	    string id = line.substr(0, line.find(delimitador));
+	    line.erase(0, line.find(delimitador) + delimitador.length());
+
+	    string sentimiento = line.substr(0, line.find(delimitador));
+	    line.erase(0, line.find(delimitador) + delimitador.length());
+
+
+	    label nuevaLabel;
+	    nuevaLabel.id = id;
+	    if (atoi(sentimiento.c_str()) == 0){
+	    	nuevaLabel.sentimiento = -1;
+	    }else{
+	    nuevaLabel.sentimiento = 1;
+	    }
+	    vector.push_back(nuevaLabel);
+	    i++;
+	  }
+	  return vector;
+}
+

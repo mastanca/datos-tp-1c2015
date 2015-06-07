@@ -15,7 +15,7 @@
 #include "math.h"
 using namespace std;
 
-#define CANTIDAD_A_COMPARAR 1
+#define CANTIDAD_A_COMPARAR 8000
 
 AMDL::AMDL(int pos_inicial, int pos_final, std::string dirArchivo){
   this->pos_inicial = pos_inicial;
@@ -70,7 +70,7 @@ void AMDL::ejecutar() {
       review->sentimiento = 0;
 //    if ((i%1000) == 0)
 //    cout << "Procesados: " << i <<" de 25000" << endl;
-    if ((i%100)==0)
+    if ((i%10)==0)
     	cout <<"Procesados: " << i << endl;
     if ( i > (pos_final - pos_inicial))
       break;
