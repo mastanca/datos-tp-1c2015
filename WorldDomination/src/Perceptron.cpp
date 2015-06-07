@@ -20,11 +20,12 @@ void Perceptron::ejecutar (){
 	vectorLabels = parseador.getLabels(CANTIDAD);
 
 	fstream myFile;
-	myFile.open("data/MatrizSimetricaBinaria-0-25000.dat", ios::binary | ios::in);
+	myFile.open("data/MatrizSimetricaBinaria-0-25000.dat", ios::binary | ios::in | ios::ate);
+	int size = myFile.tellg();
 	myFile.seekg(0, ios::beg);
-	float* buffer = new float;
-	myFile.read((char *)buffer, sizeof(float));
-	delete buffer;
+	float* buffer = new float [size];
+	myFile.read((char *)buffer, sizeof(float)*size);
+	delete []buffer;
 	myFile.close();
 
 }
