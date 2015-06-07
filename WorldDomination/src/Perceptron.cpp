@@ -21,9 +21,9 @@ void Perceptron::ejecutar (){
 
 	fstream myFile;
 	myFile.open("data/MatrizSimetricaBinaria-0-25000.dat", ios::binary | ios::in | ios::ate);
-	int size = myFile.tellg();
+	unsigned int size = myFile.tellg();
 	myFile.seekg(0, ios::beg);
-	float* buffer = new float [size];
+	float* buffer = new float [size*2];
 	myFile.read((char *)buffer, sizeof(float)*size);
 	delete []buffer;
 	myFile.close();
