@@ -13,7 +13,8 @@ using namespace std;
 int main() {
 	int opcion = 0;
 	cout << "Inserte 1 para AMDL, 2 para Perceptron con Kernel: ";
-	cin >> opcion;
+	//cin >> opcion;
+	opcion = 2;
 	switch (opcion){
 		case 1:
 		{

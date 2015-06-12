@@ -12,58 +12,97 @@
 
 using namespace std;
 
-#define CANTIDAD 25000
-void Perceptron::ejecutar (){
-	Parseador parseador("data/train_data_limpia.csv");
-	vector<label> vectorLabels;
-	vectorLabels = parseador.getLabels(CANTIDAD);
+#define CANTIDAD_REVIEWS_ENTRENAMIENTO 50
+#define MAXIMA_CANTIDAD_ITERACIONES 10000
+#define MAXIMA_CANTIDAD_ERRORES 10 // termina si antes si hay menos que esta cantidad
 
-	std::ifstream file("data/MatrizSimetricaBinaria-0-25000.dat", std::ifstream::ate | std::ifstream::binary);
-  unsigned int size = file.tellg();
+void Perceptron::ejecutar() {
+  Parseador parseador("data/train_data_limpia.csv");
+  vector<review> reviewsEntrenamiento = parseador.getReviews(
+  CANTIDAD_REVIEWS_ENTRENAMIENTO);
+
+  std::ifstream file("data/MatrizSimetricaBinaria-0-25000.dat",
+                     std::ifstream::ate | std::ifstream::binary);
   file.seekg(0, file.beg);
-	vector<vector<float> > matriz(CANTIDAD, vector<float>(CANTIDAD));
-	for (int i = 0;i<CANTIDAD;i++)
-	  for (int j=0;j < CANTIDAD;j++)
-	     file.read((char*)(&matriz[i][j]), sizeof(float));
 
-	cout << matriz[0][0] << endl;
-	cout << matriz[1][1] << endl;
-	cout << matriz[100][0] << endl;
-	cout << matriz[100][100] << endl;
+  vector<vector<float> > matriz(25000, vector<float>(25000));
 
-	vector<int> vectorErrores;
-	int factorDeAprendizaje = 1;
-	file.close();
+  for (int i = 0; i < 25000; i++)
+    for (int j = 0; j < 25000; j++)
+      file.read((char*) (&matriz[i][j]), sizeof(float));
+
+  for (int i = 0; i < 25000; i++)
+    matriz[i][i] = 0;
+
+  //entrenar:
+
+  std::vector<float> pesos(CANTIDAD_REVIEWS_ENTRENAMIENTO, 0.0);
+
+  int cantidadErrores;
+  double resultado;
+  for (int k = 0; k < MAXIMA_CANTIDAD_ITERACIONES; k++) {
+    cantidadErrores = 0;
+    for (int i = 0; i < CANTIDAD_REVIEWS_ENTRENAMIENTO; i++) {
+      for (int j = 0; j < CANTIDAD_REVIEWS_ENTRENAMIENTO; ++j) {
+
+        double res = 1 - matriz[i][j];
+        if (reviewsEntrenamiento[j].sentimiento == 1)
+          resultado = resultado + (res * pesos[j]);
+        else
+          resultado = resultado - (res * pesos[j]);
+
+      }
+      //std::cout << "i: " << i << endl;
+      std::cout << "resultado: " << resultado << endl;
+      bool resultadoCorrecto = false;
+      if (resultado > 0) {
+        if (reviewsEntrenamiento[i].sentimiento == 1)
+          resultadoCorrecto = true;
+      } else if (reviewsEntrenamiento[i].sentimiento == 0)
+        resultadoCorrecto = true;
+
+      if (!resultadoCorrecto) {
+        cantidadErrores++;
+        pesos[i]++;
+      }
+      //std::cout << "peso de i" << pesos[i] << endl;
+    }
+    cout << "Termino iteracion " << k << " cantidad de errores: "
+         << cantidadErrores << endl;
+  }
+
+  cout << "Fin entrenamiento perceptron" << endl;
+
 }
 /*
-/////////////////////////////// Como estaba antes:
+ /////////////////////////////// Como estaba antes:
 
-#define index(fila, columna) 25000*fila + columna
+ #define index(fila, columna) 25000*fila + columna
 
-void Perceptron::ejecutar (){
-  Parseador parseador("data/train_data_limpia.csv");
-  vector<label> vectorLabels;
-  vectorLabels = parseador.getLabels(CANTIDAD);
+ void Perceptron::ejecutar (){
+ Parseador parseador("data/train_data_limpia.csv");
+ vector<label> vectorLabels;
+ vectorLabels = parseador.getLabels(CANTIDAD);
 
-  fstream myFile;
-  myFile.open("data/MatrizSimetricaBinaria-0-25000.dat", ios::binary | ios::in | ios::ate);
-  unsigned int size = myFile.tellg();
-  myFile.seekg(0, ios::beg);
-  float *matriz = new float [size*2];
-  myFile.read((char *)matriz, sizeof(float)*size);
+ fstream myFile;
+ myFile.open("data/MatrizSimetricaBinaria-0-25000.dat", ios::binary | ios::in | ios::ate);
+ unsigned int size = myFile.tellg();
+ myFile.seekg(0, ios::beg);
+ float *matriz = new float [size*2];
+ myFile.read((char *)matriz, sizeof(float)*size);
 
-  /* EJEMPLO USO DE LA MATRIZ
-  cout << matriz[index(0,0)] << endl;
-  cout << matriz[index(5000,5000)] << endl;
-  cout << matriz[index(1487,23145)] << endl;
-  cout << matriz[index(23145,1487)] << endl;
+ /* EJEMPLO USO DE LA MATRIZ
+ cout << matriz[index(0,0)] << endl;
+ cout << matriz[index(5000,5000)] << endl;
+ cout << matriz[index(1487,23145)] << endl;
+ cout << matriz[index(23145,1487)] << endl;
 
-  vector<int> vectorErrores;
-  int factorDeAprendizaje = 1;
+ vector<int> vectorErrores;
+ int factorDeAprendizaje = 1;
 
 
-  delete []matriz;
-  myFile.close();
+ delete []matriz;
+ myFile.close();
 
-}
-*/
+ }
+ */
