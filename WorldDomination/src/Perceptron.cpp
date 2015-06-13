@@ -12,9 +12,9 @@
 
 using namespace std;
 
-#define CANTIDAD_REVIEWS_ENTRENAMIENTO 50
+#define CANTIDAD_REVIEWS_ENTRENAMIENTO 300
 #define MAXIMA_CANTIDAD_ITERACIONES 10000
-#define MAXIMA_CANTIDAD_ERRORES 10 // termina si antes si hay menos que esta cantidad
+#define MAXIMA_CANTIDAD_ERRORES 0 // termina antes si hay menos o igual que esta cantidad
 
 void Perceptron::ejecutar() {
   Parseador parseador("data/train_data_limpia.csv");
@@ -40,9 +40,11 @@ void Perceptron::ejecutar() {
 
   int cantidadErrores;
   double resultado;
+
   for (int k = 0; k < MAXIMA_CANTIDAD_ITERACIONES; k++) {
     cantidadErrores = 0;
     for (int i = 0; i < CANTIDAD_REVIEWS_ENTRENAMIENTO; i++) {
+      resultado = 0;
       for (int j = 0; j < CANTIDAD_REVIEWS_ENTRENAMIENTO; ++j) {
 
         double res = 1 - matriz[i][j];
@@ -52,8 +54,6 @@ void Perceptron::ejecutar() {
           resultado = resultado - (res * pesos[j]);
 
       }
-      //std::cout << "i: " << i << endl;
-      std::cout << "resultado: " << resultado << endl;
       bool resultadoCorrecto = false;
       if (resultado > 0) {
         if (reviewsEntrenamiento[i].sentimiento == 1)
@@ -65,12 +65,17 @@ void Perceptron::ejecutar() {
         cantidadErrores++;
         pesos[i]++;
       }
-      //std::cout << "peso de i" << pesos[i] << endl;
     }
     cout << "Termino iteracion " << k << " cantidad de errores: "
          << cantidadErrores << endl;
+
+    if (cantidadErrores <= MAXIMA_CANTIDAD_ERRORES)
+      break;
   }
 
+  for (int i = 0; i < CANTIDAD_REVIEWS_ENTRENAMIENTO; i++){
+    cout << pesos[i] << " ";
+  }
   cout << "Fin entrenamiento perceptron" << endl;
 
 }
