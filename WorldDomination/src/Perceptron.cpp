@@ -9,11 +9,12 @@
 #include "Perceptron.h"
 #include <fstream>
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 
-#define CANTIDAD_REVIEWS_ENTRENAMIENTO 300
-#define MAXIMA_CANTIDAD_ITERACIONES 10000
+#define CANTIDAD_REVIEWS_ENTRENAMIENTO 200
+#define MAXIMA_CANTIDAD_ITERACIONES 1000
 #define MAXIMA_CANTIDAD_ERRORES 0 // termina antes si hay menos o igual que esta cantidad
 
 void Perceptron::ejecutar() {
@@ -21,18 +22,25 @@ void Perceptron::ejecutar() {
   vector<review> reviewsEntrenamiento = parseador.getReviews(
   CANTIDAD_REVIEWS_ENTRENAMIENTO);
 
-  std::ifstream file("data/MatrizSimetricaBinaria-0-25000.dat",
+  std::ifstream file("data/MatrizSimetricaBinariaZLIB-0-200.dat",
                      std::ifstream::ate | std::ifstream::binary);
   file.seekg(0, file.beg);
 
-  vector<vector<float> > matriz(25000, vector<float>(25000));
+  vector<vector<float> > matriz(200, vector<float>(200));
 
-  for (int i = 0; i < 25000; i++)
-    for (int j = 0; j < 25000; j++)
+  for (int i = 0; i < 200; i++)
+    for (int j = 0; j < 200; j++)
       file.read((char*) (&matriz[i][j]), sizeof(float));
 
-  for (int i = 0; i < 25000; i++)
-    matriz[i][i] = 0;
+  for (int i = 0; i < 200; i++)
+      for (int j = 0; j < 200; j++)
+        cout << (float)matriz[i][j] << endl;
+
+  /*for (int i = 0; i < 5; i++)
+      std::cout << matriz[i][i] << endl;*/
+
+  /*for (int i = 0; i < 25000; i++)
+    matriz[i][i] = 0;*/
 
   //entrenar:
 
@@ -47,6 +55,7 @@ void Perceptron::ejecutar() {
       resultado = 0;
       for (int j = 0; j < CANTIDAD_REVIEWS_ENTRENAMIENTO; ++j) {
 
+    	//double res = 1 - 1/(1 + exp(-(204.6720082*matriz[i][j] - 193.4150478)));
         double res = 1 - matriz[i][j];
         if (reviewsEntrenamiento[j].sentimiento == 1)
           resultado = resultado + (res * pesos[j]);
@@ -96,7 +105,7 @@ void Perceptron::ejecutar() {
  float *matriz = new float [size*2];
  myFile.read((char *)matriz, sizeof(float)*size);
 
- /* EJEMPLO USO DE LA MATRIZ
+ // EJEMPLO USO DE LA MATRIZ
  cout << matriz[index(0,0)] << endl;
  cout << matriz[index(5000,5000)] << endl;
  cout << matriz[index(1487,23145)] << endl;
