@@ -12,6 +12,8 @@
 #include <fstream>
 #include <sstream>
 #include "../dlib/compress_stream.h"
+#include "zlib.h"
+#include <stdexcept>
 
 // pongo de orden 4 en adelante (hay de orden mas bajo pero dudo que valga la pena probar)
 // PPMD: la implementacion A es mas rapida que la B, pero la B comprime mejor:
@@ -26,6 +28,7 @@ typedef dlib::compress_stream::kernel_3b LZP; // LZP, "uses an order-5-4-3 model
 
 typedef dlib::compress_stream::kernel_2a MEZCLA_LZ77_PPM; // mezcla entre LZ77 y ppm orden 1 no se que tal anda esto, cuestion de probar creo que tambien hay lz77 sin ppm y algunos mas, toda la info esta por aca ftp://ftp.nist.gov/pub/mel/michalos/Software/Optimization/dlib-18.9/docs/compression.html#entropy_decoder_model  y tambien (lo q uso aca): ftp://ftp.nist.gov/pub/mel/michalos/Software/Optimization/dlib-18.9/docs/compression.html#compress_stream
 
+
 #define COMPRESOR_A_USAR PPMD_B_7 // <---------- AHI CAMBIEN CUAL QUIEREN USAR Y LISTO! (no hace falta cambiar NADA mas) <----------
 
 using namespace std;
@@ -33,6 +36,7 @@ using namespace std;
 class Compresor {
  public:
   std::string comprimir(string &entrada);
+  std::string comprimirZLIB(const std::string& str, int compressionlevel = Z_BEST_COMPRESSION);
  private:
   COMPRESOR_A_USAR compresor;
 };

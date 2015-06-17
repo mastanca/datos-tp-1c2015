@@ -49,4 +49,5 @@ int main() {
 		break;
 		}
 	}
+	std::cout << "Done!" << endl;
 }

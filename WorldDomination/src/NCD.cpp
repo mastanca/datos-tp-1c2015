@@ -21,9 +21,9 @@ double NCD::calcular(string& a, string& b){
   int minimo;
   int maximo;
   string suma = a+b;
-  int largoAcomprimido = compresor.comprimir(a).size();
-  int largoBcomprimido = compresor.comprimir(b).size();
-  int largoSumaComprimida = compresor.comprimir(suma).size();
+  int largoAcomprimido = compresor.comprimirZLIB(a).size();
+  int largoBcomprimido = compresor.comprimirZLIB(b).size();
+  int largoSumaComprimida = compresor.comprimirZLIB(suma).size();
 
   if (largoAcomprimido > largoBcomprimido){
     minimo = largoBcomprimido;
