@@ -14,7 +14,7 @@
 
 using namespace std;
 
-#define CANTIDAD_REVIEWS_ENTRENAMIENTO 200
+#define CANTIDAD_REVIEWS_ENTRENAMIENTO 500
 #define MAXIMA_CANTIDAD_ITERACIONES 1000
 #define MAXIMA_CANTIDAD_ERRORES 0 // termina antes si hay menos o igual que esta cantidad
 
@@ -23,19 +23,19 @@ void Perceptron::ejecutar() {
   vector<review> reviewsEntrenamiento = parseador.getReviews(
   CANTIDAD_REVIEWS_ENTRENAMIENTO);
 
-  std::ifstream file("data/MatrizSimetricaBinariaZLIB-0-200.dat",
+  std::ifstream file("data/MatrizSimetricaBinariaZLIB-0-500.dat",
                      std::ifstream::ate | std::ifstream::binary);
   file.seekg(0, file.beg);
 
-  vector<vector<float> > matriz(200, vector<float>(200));
+  vector<vector<float> > matriz(CANTIDAD_REVIEWS_ENTRENAMIENTO, vector<float>(CANTIDAD_REVIEWS_ENTRENAMIENTO));
 
-  for (int i = 0; i < 200; i++)
-    for (int j = 0; j < 200; j++)
+  for (int i = 0; i < CANTIDAD_REVIEWS_ENTRENAMIENTO; i++)
+    for (int j = 0; j < CANTIDAD_REVIEWS_ENTRENAMIENTO; j++)
       file.read((char*) (&matriz[i][j]), sizeof(float));
 
-  for (int i = 0; i < 200; i++)
-    for (int j = 0; j < 200; j++)
-      cout << (float) matriz[i][j] << endl;
+  /*for (int i = 0; i < CANTIDAD_REVIEWS_ENTRENAMIENTO; i++)
+    for (int j = 0; j < CANTIDAD_REVIEWS_ENTRENAMIENTO; j++)
+      cout << (float) matriz[i][j] << endl;*/
 
   /*for (int i = 0; i < 5; i++)
    std::cout << matriz[i][i] << endl;*/
@@ -48,6 +48,7 @@ void Perceptron::ejecutar() {
 
   int cantidadErrores;
   double resultado;
+  std::cout << endl;
 
   for (int k = 0; k < MAXIMA_CANTIDAD_ITERACIONES; k++) {
     cantidadErrores = 0;
@@ -85,12 +86,13 @@ void Perceptron::ejecutar() {
   for (int i = 0; i < CANTIDAD_REVIEWS_ENTRENAMIENTO; i++) {
     cout << pesos[i] << " ";
   }
-  cout << "Fin entrenamiento perceptron" << endl;
+  cout << endl << "Fin entrenamiento perceptron" << endl << endl;
 
   //evaluar:
   NCD ncd;
   Parseador parseadorTest("data/test_data_limpia.csv");
   vector<review> reviewsTest = parseadorTest.getTestReviews();
+  std::cout << "Empieza clasificacion" << endl;
 
   for (int i = 0; i < 25000; i++) {
     double resultado = 0;
@@ -109,7 +111,8 @@ void Perceptron::ejecutar() {
     else
       reviewsTest[i].sentimiento = 0;
 
-    cout << i << endl;
+    if (i%100 == 0)
+    	cout << "Clasificados "<< i << " de 25000" << endl;
   }
 
   parseadorTest.escribir_resultados(reviewsTest,
