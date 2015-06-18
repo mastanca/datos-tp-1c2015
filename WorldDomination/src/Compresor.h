@@ -37,6 +37,7 @@ class Compresor {
  public:
   std::string comprimir(string &entrada);
   std::string comprimirZLIB(const std::string& str, int compressionlevel = Z_BEST_COMPRESSION);
+  //std::string comprimirZLIB (string& entrada);
  private:
   COMPRESOR_A_USAR compresor;
 };

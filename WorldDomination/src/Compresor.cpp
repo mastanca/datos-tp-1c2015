@@ -11,7 +11,6 @@ using namespace std;
 using namespace dlib;
 
 std::string Compresor::comprimir(string &entrada) {
-	//std::cout << "Usando DLIB" << endl;
     string salida;
     istringstream texto(entrada, ios::binary);
     ostringstream textoComprimido(ios::binary);
@@ -60,3 +59,12 @@ std::string Compresor::comprimirZLIB(const std::string& str, int compressionleve
 
     return outstring;
 }
+/*std::string Compresor::comprimirZLIB (string& entrada){
+	const char * input = entrada.c_str();
+	Byte *compr;
+	uLong comprLen;
+	uLong len = (uLong)strlen(input)+1;
+    compress2(compr,&comprLen,(const Bytef*)input,len,Z_BEST_COMPRESSION);
+    std::string salida(reinterpret_cast<char*>(compr));
+    return salida;
+}*/
