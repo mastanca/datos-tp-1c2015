@@ -17,13 +17,24 @@ NCD::~NCD() {
   // TODO Auto-generated destructor stub
 }
 
-double NCD::calcular(string& a, string& b){
+double NCD::calcular(string& a, string& b, int& compresorAUsar){
   int minimo;
   int maximo;
   string suma = a+b;
-  int largoAcomprimido = compresor.comprimirZLIB(a).size();
-  int largoBcomprimido = compresor.comprimirZLIB(b).size();
-  int largoSumaComprimida = compresor.comprimirZLIB(suma).size();
+  int largoAcomprimido = 0;
+  int largoBcomprimido = 0;
+  int largoSumaComprimida = 0;
+
+
+  if (compresorAUsar == 1){
+	  largoAcomprimido = compresor.comprimirZLIB(a).size();
+	  largoBcomprimido = compresor.comprimirZLIB(b).size();
+	  largoSumaComprimida = compresor.comprimirZLIB(suma).size();
+  }else{
+	  largoAcomprimido = compresor.comprimir(a).size();
+	  largoBcomprimido = compresor.comprimir(b).size();
+	  largoSumaComprimida = compresor.comprimir(suma).size();
+  }
 
   if (largoAcomprimido > largoBcomprimido){
     minimo = largoBcomprimido;

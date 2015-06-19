@@ -14,9 +14,9 @@
 
 using namespace std;
 
-#define CANTIDAD_REVIEWS_ENTRENAMIENTO 10
+#define CANTIDAD_REVIEWS_ENTRENAMIENTO 25000
 #define MAXIMA_CANTIDAD_ITERACIONES 1000
-#define MAXIMA_CANTIDAD_ERRORES 0 // termina antes si hay menos o igual que esta cantidad
+#define MAXIMA_CANTIDAD_ERRORES 53 // termina antes si hay menos o igual que esta cantidad
 
 void Perceptron::ejecutar() {
 	Parseador parseador("data/train_data_limpia.csv");
@@ -26,23 +26,39 @@ void Perceptron::ejecutar() {
 			std::ifstream::ate | std::ifstream::binary);
 	file.seekg(0, file.beg);
 
+	//
+	// NOTA IMPORTANTE: Para poder usar la matriz de 25k de ZLIB y poder seleccionar menos reviews
+	// 					se levanta la matriz entera con el for que esta a continuacion
+	//					y despues se agarra el pedazo que se quiere usar con el for que le
+	//					sigue. Si van a cambiar de archivo de matriz tienen que comentar los 2 primeros for
+	//					y descomentar el de abajo que esta indicado. Para cualquier otra matriz mas chica
+	//					siempre usarla entera, osea usar el tercer for
+	//
+
+	// Instrucciones para levantar la matriz de 25k de ZLIB
+	vector<vector<float> > matrizLoad(25000, vector<float>(25000));
+
+	for (int i = 0; i < 25000; i++)
+		for (int j = 0; j < 25000; j++)
+			file.read((char*) (&matrizLoad[i][j]), sizeof(float));
+
+	// Instrucciones para agarrar el pedazo de matriz que se usa
 	vector<vector<float> > matriz(CANTIDAD_REVIEWS_ENTRENAMIENTO,
 			vector<float>(CANTIDAD_REVIEWS_ENTRENAMIENTO));
 
 	for (int i = 0; i < CANTIDAD_REVIEWS_ENTRENAMIENTO; i++)
 		for (int j = 0; j < CANTIDAD_REVIEWS_ENTRENAMIENTO; j++)
-			file.read((char*) (&matriz[i][j]), sizeof(float));
+			matriz[i][j] = matrizLoad[i][j];
 
-	/*for (int i = 0; i < CANTIDAD_REVIEWS_ENTRENAMIENTO; i++)
-	 for (int j = 0; j < CANTIDAD_REVIEWS_ENTRENAMIENTO; j++)
-	 cout << (float) matriz[i][j] << endl;*/
+	// DESCOMENTAR ESTA DECLARACION Y EL FOR PARA USAR MATRICES MAS CHICAS QUE 25K DE ZLIB
 
-	/*for (int i = 0; i < 5; i++)
-	 std::cout << matriz[i][i] << endl;*/
+	/*vector<vector<float> > matriz(CANTIDAD_REVIEWS_ENTRENAMIENTO, vector<float>(CANTIDAD_REVIEWS_ENTRENAMIENTO));
 
-	/*for (int i = 0; i < 25000; i++)
-	 matriz[i][i] = 0;*/
+	for (int i = 0; i < CANTIDAD_REVIEWS_ENTRENAMIENTO; i++)
+			for (int j = 0; j < CANTIDAD_REVIEWS_ENTRENAMIENTO; j++)
+				file.read((char*) (&matriz[i][j]), sizeof(float));
 
+*/
 	//entrenar:
 	std::vector<float> pesos(CANTIDAD_REVIEWS_ENTRENAMIENTO, 0.0);
 
@@ -94,6 +110,13 @@ void Perceptron::ejecutar() {
 	vector<review> reviewsTest = parseadorTest.getTestReviews();
 	vector<double> vectorProbabilidades;
 
+	// Seleccion del compresor
+	int compresorAUsar = 0;
+	while (compresorAUsar != 1  && compresorAUsar != 2){
+		  cout << endl << "Ingrese 1 para usar ZLIB, 2 para usar PPMD: ";
+		  cin >> compresorAUsar;
+	  }
+
 	std::cout << "Empieza clasificacion" << endl;
 
 	for (int i = 0; i < 25000; i++) {
@@ -101,7 +124,7 @@ void Perceptron::ejecutar() {
 		for (int j = 0; j < CANTIDAD_REVIEWS_ENTRENAMIENTO; ++j) {
 			double kernel = 1
 					- ncd.calcular(reviewsTest[i].texto,
-							reviewsEntrenamiento[j].texto);
+							reviewsEntrenamiento[j].texto, compresorAUsar);
 
 			if (reviewsEntrenamiento[j].sentimiento > 0)
 				resultado = resultado + kernel * pesos[j];
@@ -117,12 +140,13 @@ void Perceptron::ejecutar() {
 		if (i % 100 == 0)
 			cout << "Clasificados " << i << " de 25000" << endl;
 		//std::cout << i <<endl;
-		double proba = ((double)1/(double)(1+exp(-resultado)));
+		double proba = ((double) 1 / (double) (1 + exp(-resultado)));
 		vectorProbabilidades.push_back(proba);
 	}
 
 	parseadorTest.escribir_resultados(reviewsTest,
 			"data/resultadosPerceptron.csv");
-	parseadorTest.escribir_probabilidades(vectorProbabilidades, "data/probabilidades_perceptron.csv");
+	parseadorTest.escribir_probabilidades(vectorProbabilidades,
+			"data/probabilidades_perceptron.csv");
 
 }

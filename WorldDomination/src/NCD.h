@@ -14,7 +14,7 @@
 
 class NCD {
  public:
-  double calcular(std::string& a, std::string& b);
+  double calcular(std::string& a, std::string& b, int& compresorAUsar);
   NCD();
   virtual ~NCD();
  private:
