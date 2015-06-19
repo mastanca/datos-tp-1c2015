@@ -115,6 +115,8 @@ void Perceptron::ejecutar() {
 	while (compresorAUsar != 1  && compresorAUsar != 2){
 		  cout << endl << "Ingrese 1 para usar ZLIB, 2 para usar PPMD: ";
 		  cin >> compresorAUsar;
+		  //compresorAUsar = 1;
+		  //compresorAUsar = 2;
 	  }
 
 	std::cout << "Empieza clasificacion" << endl;
