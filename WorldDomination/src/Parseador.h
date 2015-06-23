@@ -14,7 +14,7 @@
 
 struct review {
     std::string id;
-    int sentimiento;
+    double sentimiento;
     std::string texto;
   };
 

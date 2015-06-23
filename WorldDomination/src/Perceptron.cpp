@@ -15,8 +15,9 @@
 using namespace std;
 
 #define CANTIDAD_REVIEWS_ENTRENAMIENTO 25000
-#define MAXIMA_CANTIDAD_ITERACIONES 1000
-#define MAXIMA_CANTIDAD_ERRORES 53 // termina antes si hay menos o igual que esta cantidad
+#define DIMENSION_MATRIZ 25000
+#define MAXIMA_CANTIDAD_ITERACIONES 25
+#define MAXIMA_CANTIDAD_ERRORES 2844 // termina antes si hay menos o igual que esta cantidad
 
 void Perceptron::ejecutar() {
 	Parseador parseador("data/train_data_limpia.csv");
@@ -26,39 +27,29 @@ void Perceptron::ejecutar() {
 			std::ifstream::ate | std::ifstream::binary);
 	file.seekg(0, file.beg);
 
-	//
-	// NOTA IMPORTANTE: Para poder usar la matriz de 25k de ZLIB y poder seleccionar menos reviews
-	// 					se levanta la matriz entera con el for que esta a continuacion
-	//					y despues se agarra el pedazo que se quiere usar con el for que le
-	//					sigue. Si van a cambiar de archivo de matriz tienen que comentar los 2 primeros for
-	//					y descomentar el de abajo que esta indicado. Para cualquier otra matriz mas chica
-	//					siempre usarla entera, osea usar el tercer for
-	//
+	// Cargo la matriz de 25k*25k para entrenar
+	vector<vector<float> > matriz(DIMENSION_MATRIZ,
+			vector<float>(DIMENSION_MATRIZ));
 
-	// Instrucciones para levantar la matriz de 25k de ZLIB
-	vector<vector<float> > matrizLoad(25000, vector<float>(25000));
+	for (int i = 0; i < DIMENSION_MATRIZ; i++)
+		for (int j = 0; j < DIMENSION_MATRIZ; j++)
+			file.read((char*) (&matriz[i][j]), sizeof(float));
 
-	for (int i = 0; i < 25000; i++)
-		for (int j = 0; j < 25000; j++)
-			file.read((char*) (&matrizLoad[i][j]), sizeof(float));
+	file.close();
 
-	// Instrucciones para agarrar el pedazo de matriz que se usa
-	vector<vector<float> > matriz(CANTIDAD_REVIEWS_ENTRENAMIENTO,
-			vector<float>(CANTIDAD_REVIEWS_ENTRENAMIENTO));
+	std::ifstream fileTest("data/MatrizBinariaTestTraining-0-25000.dat",
+				std::ifstream::ate | std::ifstream::binary);
+		fileTest.seekg(0, fileTest.beg);
+	// Cargo la matriz de test*training
+	vector<vector<float> > matrizClasificadora(DIMENSION_MATRIZ,
+			vector<float>(DIMENSION_MATRIZ));
 
-	for (int i = 0; i < CANTIDAD_REVIEWS_ENTRENAMIENTO; i++)
-		for (int j = 0; j < CANTIDAD_REVIEWS_ENTRENAMIENTO; j++)
-			matriz[i][j] = matrizLoad[i][j];
+	for (int i = 0; i < DIMENSION_MATRIZ; i++)
+		for (int j = 0; j < DIMENSION_MATRIZ; j++)
+			fileTest.read((char*) (&matrizClasificadora[i][j]), sizeof(float));
 
-	// DESCOMENTAR ESTA DECLARACION Y EL FOR PARA USAR MATRICES MAS CHICAS QUE 25K DE ZLIB
+	fileTest.close();
 
-	/*vector<vector<float> > matriz(CANTIDAD_REVIEWS_ENTRENAMIENTO, vector<float>(CANTIDAD_REVIEWS_ENTRENAMIENTO));
-
-	for (int i = 0; i < CANTIDAD_REVIEWS_ENTRENAMIENTO; i++)
-			for (int j = 0; j < CANTIDAD_REVIEWS_ENTRENAMIENTO; j++)
-				file.read((char*) (&matriz[i][j]), sizeof(float));
-
-*/
 	//entrenar:
 	std::vector<float> pesos(CANTIDAD_REVIEWS_ENTRENAMIENTO, 0.0);
 
@@ -99,10 +90,8 @@ void Perceptron::ejecutar() {
 			break;
 	}
 
-	for (int i = 0; i < CANTIDAD_REVIEWS_ENTRENAMIENTO; i++) {
-		cout << pesos[i] << " ";
-	}
 	cout << endl << "Fin entrenamiento perceptron" << endl << endl;
+	cout << endl << "Usando " << cantidadErrores << "errores" << endl << endl;
 
 	//evaluar:
 	NCD ncd;
@@ -112,43 +101,46 @@ void Perceptron::ejecutar() {
 
 	// Seleccion del compresor
 	int compresorAUsar = 0;
-	while (compresorAUsar != 1  && compresorAUsar != 2){
-		  cout << endl << "Ingrese 1 para usar ZLIB, 2 para usar PPMD: ";
-		  cin >> compresorAUsar;
-		  //compresorAUsar = 1;
-		  //compresorAUsar = 2;
-	  }
+	while (compresorAUsar != 1 && compresorAUsar != 2) {
+		cout << endl << "Ingrese 1 para usar ZLIB, 2 para usar PPMD: ";
+		//cin >> compresorAUsar;
+		compresorAUsar = 1;
+		//compresorAUsar = 2;
+	}
 
-	std::cout << "Empieza clasificacion" << endl;
-
+	std::cout << endl << "Empieza clasificacion" << endl;
+	// Este 25000 es la cantidad de reviews a clasificar
 	for (int i = 0; i < 25000; i++) {
 		double resultado = 0;
 		for (int j = 0; j < CANTIDAD_REVIEWS_ENTRENAMIENTO; ++j) {
-			double kernel = 1
-					- ncd.calcular(reviewsTest[i].texto,
-							reviewsEntrenamiento[j].texto, compresorAUsar);
+//			double kernel = 1
+//					- ncd.calcular(reviewsTest[i].texto,
+//							reviewsEntrenamiento[j].texto, compresorAUsar);
+			double kernel = 1 - matrizClasificadora[i][j];
 
 			if (reviewsEntrenamiento[j].sentimiento > 0)
 				resultado = resultado + kernel * pesos[j];
 			else
 				resultado = resultado - kernel * pesos[j];
 		}
-
-		if (resultado > 0)
-			reviewsTest[i].sentimiento = 1;
-		else
-			reviewsTest[i].sentimiento = 0;
+		double proba = ((double) 1 / (double) (1 + exp(-resultado)));
+		reviewsTest[i].sentimiento = proba;
+//		if (resultado > 0)
+//			reviewsTest[i].sentimiento = 1;
+//		else
+//			reviewsTest[i].sentimiento = 0;
 
 		if (i % 100 == 0)
 			cout << "Clasificados " << i << " de 25000" << endl;
 		//std::cout << i <<endl;
-		double proba = ((double) 1 / (double) (1 + exp(-resultado)));
+		if (proba > 1)
+			cout << i << endl;
 		vectorProbabilidades.push_back(proba);
 	}
 
 	parseadorTest.escribir_resultados(reviewsTest,
 			"data/resultadosPerceptron.csv");
 	parseadorTest.escribir_probabilidades(vectorProbabilidades,
-			"data/probabilidades_perceptron.csv");
+			"data/grupo09_probs.csv");
 
 }
