@@ -14,15 +14,14 @@
 
 using namespace std;
 
-#define CANTIDAD_REVIEWS_ENTRENAMIENTO 25000
+#define CANTIDAD_REVIEWS_ENTRENAMIENTO 5000
 #define DIMENSION_MATRIZ 25000
-#define MAXIMA_CANTIDAD_ITERACIONES 25
-#define MAXIMA_CANTIDAD_ERRORES 2844 // termina antes si hay menos o igual que esta cantidad
+#define MAXIMA_CANTIDAD_ITERACIONES 100
+#define MAXIMA_CANTIDAD_ERRORES 0 // termina antes si hay menos o igual que esta cantidad
 
-void Perceptron::ejecutar() {
-	Parseador parseador("data/train_data_limpia.csv");
-	vector<review> reviewsEntrenamiento = parseador.getReviews(
-	CANTIDAD_REVIEWS_ENTRENAMIENTO);
+vector<float> Perceptron::entrenar(vector<review> &reviewsEntrenamiento) {
+	cout << endl <<"Cargando matriz de entrenamiento" << endl;
+
 	std::ifstream file("data/MatrizSimetricaBinariaZLIB-0-25000.dat",
 			std::ifstream::ate | std::ifstream::binary);
 	file.seekg(0, file.beg);
@@ -37,20 +36,6 @@ void Perceptron::ejecutar() {
 
 	file.close();
 
-	std::ifstream fileTest("data/MatrizBinariaTestTraining-0-25000.dat",
-				std::ifstream::ate | std::ifstream::binary);
-		fileTest.seekg(0, fileTest.beg);
-	// Cargo la matriz de test*training
-	vector<vector<float> > matrizClasificadora(DIMENSION_MATRIZ,
-			vector<float>(DIMENSION_MATRIZ));
-
-	for (int i = 0; i < DIMENSION_MATRIZ; i++)
-		for (int j = 0; j < DIMENSION_MATRIZ; j++)
-			fileTest.read((char*) (&matrizClasificadora[i][j]), sizeof(float));
-
-	fileTest.close();
-
-	//entrenar:
 	std::vector<float> pesos(CANTIDAD_REVIEWS_ENTRENAMIENTO, 0.0);
 
 	int cantidadErrores;
@@ -90,8 +75,34 @@ void Perceptron::ejecutar() {
 			break;
 	}
 
-	cout << endl << "Fin entrenamiento perceptron" << endl << endl;
-	cout << endl << "Usando " << cantidadErrores << "errores" << endl << endl;
+	cout << endl << "Fin entrenamiento perceptron" << endl;
+	cout << endl << "Usando " << cantidadErrores << " errores" << endl << endl;
+	return pesos;
+}
+
+void Perceptron::ejecutar() {
+	Parseador parseador("data/train_data_limpia.csv");
+	vector<review> reviewsEntrenamiento = parseador.getReviews(
+	CANTIDAD_REVIEWS_ENTRENAMIENTO);
+
+	// Entrenamiento
+
+	vector<float> pesos = entrenar(reviewsEntrenamiento);
+
+	cout << "Cargando matriz clasificadora" << endl;
+
+	std::ifstream fileTest("data/MatrizBinariaTestTraining-0-25000.dat",
+			std::ifstream::ate | std::ifstream::binary);
+	fileTest.seekg(0, fileTest.beg);
+	// Cargo la matriz de test*training
+	vector<vector<float> > matrizClasificadora(DIMENSION_MATRIZ,
+			vector<float>(DIMENSION_MATRIZ));
+
+	for (int i = 0; i < DIMENSION_MATRIZ; i++)
+		for (int j = 0; j < DIMENSION_MATRIZ; j++)
+			fileTest.read((char*) (&matrizClasificadora[i][j]), sizeof(float));
+
+	fileTest.close();
 
 	//evaluar:
 	NCD ncd;

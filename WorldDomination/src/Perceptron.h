@@ -11,6 +11,7 @@
 class Perceptron {
 public:
 	void ejecutar();
+	std::vector<float> entrenar(std::vector<review> &reviewsEntrenamiento);
 };
 
 
